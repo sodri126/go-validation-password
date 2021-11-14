@@ -202,3 +202,21 @@ func TestPasswordValidation(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 }
+
+func BenchmarkValidationPassword(b *testing.B) {
+	data := []string{"AbcABC123!@#", "aAbB1!", "abc12345!A", "bB019!@", "mK82$1"}
+	password := New(&ParamPassword{
+		MinimumCharacter:         5,
+		AtLeastAlphabetUpperCase: true,
+		AtLeastAlphabetLowerCase: true,
+		AtLeastNumber:            true,
+		AtLeastSpecialCharacter:  true,
+		CustomSpecialCharacter:   "",
+	})
+	for i := 0; i < b.N; i++ {
+		err := password.CheckPassword(data[i%5])
+		if err != nil {
+			b.Error(err)
+		}
+	}
+}
